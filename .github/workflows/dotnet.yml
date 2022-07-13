@@ -1,0 +1,78 @@
+name: .NET
+
+on:
+  push:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+        include-prerelease: false
+
+     # Add NuGet Sources
+
+    - name: Create Local NuGet Directory
+      run: mkdir ~/nuget
+
+    - name: Add Local Nuget Source
+      run: dotnet nuget add source ~/nuget
+
+    - name: Add GGroupp NuGet Source
+      run: dotnet nuget add source ${{ secrets.GGROUPP_NUGET_SOURCE_URL }} -n ggroupp -u ${{ secrets.GGROUPP_NUGET_SOURCE_USER_NAME }} -p ${{ secrets.GGROUPP_NUGET_SOURCE_USER_PASSWORD }} --store-password-in-clear-text
+
+    # Swagger.Option
+
+    - name: Restore Swagger.Option
+      run: dotnet restore ./src/*/Swagger.Option.csproj
+
+    - name: Build Swagger.Option
+      run: dotnet build ./src/*/Swagger.Option.csproj --no-restore  -c Release
+
+    - name: Pack Swagger.Option
+      run: dotnet pack ./src/*/Swagger.Option.csproj --no-restore -o ~/nuget  -c Release
+
+    # Swagger.Core
+
+    - name: Restore Swagger.Core
+      run: dotnet restore ./src/*/Swagger.Core.csproj
+
+    - name: Build Swagger.Core
+      run: dotnet build ./src/*/Swagger.Core.csproj --no-restore  -c Release
+
+    - name: Pack Swagger.Core
+      run: dotnet pack ./src/*/Swagger.Core.csproj --no-restore -o ~/nuget  -c Release
+
+    # Swagger.UI
+
+    - name: Restore Swagger.UI
+      run: dotnet restore ./src/*/Swagger.UI.csproj
+
+    - name: Build Swagger.UI
+      run: dotnet build ./src/*/Swagger.UI.csproj --no-restore  -c Release
+
+    - name: Pack Swagger.UI
+      run: dotnet pack ./src/*/Swagger.UI.csproj --no-restore -o ~/nuget  -c Release
+
+    # Swagger.Gen
+
+    - name: Restore Swagger.Gen
+      run: dotnet restore ./src/*/Swagger.Gen.csproj
+
+    - name: Build Swagger.Gen
+      run: dotnet build ./src/*/Swagger.Gen.csproj --no-restore  -c Release
+
+    - name: Pack Swagger.Gen
+      run: dotnet pack ./src/*/Swagger.Gen.csproj --no-restore -o ~/nuget  -c Release
+
+    # Push
+
+    - name: Push Packages
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: dotnet nuget push "../../../nuget/*.nupkg" -s ${{ secrets.GGROUPP_NUGET_SOURCE_URL }} -k ${{ secrets.GGROUPP_NUGET_SOURCE_USER_PASSWORD }} --skip-duplicate
