@@ -7,12 +7,15 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class SwaggerApplicationBuilderExtensions
 {
-    public static IApplicationBuilder UseSwagger(this IApplicationBuilder app, Func<IServiceProvider, ISwaggerProvider> swaggerProviderResolver)
+    public static TApplicationBuilder UseSwagger<TApplicationBuilder>(
+        this TApplicationBuilder app, Func<IServiceProvider, ISwaggerProvider> swaggerProviderResolver)
+        where TApplicationBuilder : class, IApplicationBuilder
     {
         _ = app ?? throw new ArgumentNullException(nameof(app));
         _ = swaggerProviderResolver ?? throw new ArgumentNullException(nameof(swaggerProviderResolver));
 
-        return app.Use(InvokeSwaggerAsync);
+        _ = app.Use(InvokeSwaggerAsync);
+        return app;
 
         Task InvokeSwaggerAsync(HttpContext context, RequestDelegate next)
         {
