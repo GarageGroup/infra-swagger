@@ -11,13 +11,11 @@ public sealed record class SwaggerOption
     public SwaggerOption(
         string apiName = DefaultApiName,
         string apiVersion = DefaultApiVersion,
-        [AllowNull] string description = null,
-        bool useAuthorization = false)
+        [AllowNull] string description = null)
     {
         ApiName = string.IsNullOrEmpty(apiName) ? DefaultApiName : apiName;
         ApiVersion = string.IsNullOrEmpty(apiVersion) ? DefaultApiVersion : apiVersion;
         Description = string.IsNullOrEmpty(description) ? null : description;
-        UseAuthorization = useAuthorization;
     }
 
     public string ApiName { get; }
@@ -25,6 +23,4 @@ public sealed record class SwaggerOption
     public string ApiVersion { get; }
 
     public string? Description { get; }
-
-    public bool UseAuthorization { get; }
 }

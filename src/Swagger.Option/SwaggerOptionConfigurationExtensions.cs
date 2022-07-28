@@ -17,18 +17,5 @@ public static class SwaggerOptionConfigurationExtensions
         new(
             apiName: section["ApiName"],
             apiVersion: section["ApiVersion"],
-            description: section["Description"],
-            useAuthorization: section.GetBooleanValue("UseAuthorization"));
-
-    private static bool GetBooleanValue(this IConfigurationSection section, string parameterName)
-    {
-        var value = section[parameterName];
-
-        if (string.IsNullOrEmpty(value))
-        {
-            return default;
-        }
-
-        return bool.Parse(value);
-    }
+            description: section["Description"]);
 }

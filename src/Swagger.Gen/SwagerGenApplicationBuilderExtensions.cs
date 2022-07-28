@@ -4,7 +4,6 @@ using GGroupp.Infra;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -12,9 +11,9 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class SwagerGenApplicationBuilderExtensions
 {
-    private const string AuthorizationScheme = "bearer";
-
-    public static IApplicationBuilder UseStandardSwagger(this IApplicationBuilder app, string swaggerSectionName = "Swagger")
+    public static TApplicationBuilder UseStandardSwagger<TApplicationBuilder>(
+        this TApplicationBuilder app, string swaggerSectionName = "Swagger")
+        where TApplicationBuilder : class, IApplicationBuilder
     {
         _ = app ?? throw new ArgumentNullException(nameof(app));
 
@@ -25,7 +24,9 @@ public static class SwagerGenApplicationBuilderExtensions
             serviceProvider.GetRequiredService<IConfiguration>().GetSwaggerOption(swaggerSectionName);
     }
 
-    public static IApplicationBuilder UseStandardSwagger(this IApplicationBuilder app, Func<IServiceProvider, SwaggerOption> optionResolver)
+    public static TApplicationBuilder UseStandardSwagger<TApplicationBuilder>(
+        this TApplicationBuilder app, Func<IServiceProvider, SwaggerOption> optionResolver)
+        where TApplicationBuilder : class, IApplicationBuilder
     {
         _ = app ?? throw new ArgumentNullException(nameof(app));
         _ = optionResolver ?? throw new ArgumentNullException(nameof(optionResolver));
@@ -33,7 +34,9 @@ public static class SwagerGenApplicationBuilderExtensions
         return app.InnerUseStandardSwagger(optionResolver);
     }
 
-    private static IApplicationBuilder InnerUseStandardSwagger(this IApplicationBuilder app, Func<IServiceProvider, SwaggerOption> optionResolver)
+    private static TApplicationBuilder InnerUseStandardSwagger<TApplicationBuilder>(
+        this TApplicationBuilder app, Func<IServiceProvider, SwaggerOption> optionResolver)
+        where TApplicationBuilder : class, IApplicationBuilder
     {
         return app.UseSwagger(ResolveSwaggerProvider);
 
@@ -64,34 +67,6 @@ public static class SwagerGenApplicationBuilderExtensions
             Title = option.ApiName,
             Description = option.Description,
             Version = option.ApiVersion
-        });
-
-        if (option.UseAuthorization is false)
-        {
-            return options;
-        }
-
-        options.AddSecurityDefinition(AuthorizationScheme, new()
-        {
-            Name = "Authorization",
-            Description = "JWT authorization header",
-            In = ParameterLocation.Header,
-            Scheme = AuthorizationScheme
-        });
-
-        options.AddSecurityRequirement(new()
-        {
-            {
-                new()
-                {
-                    Reference = new()
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = AuthorizationScheme
-                    }
-                },
-                Array.Empty<string>()
-            }
         });
 
         return options;
