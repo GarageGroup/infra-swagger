@@ -71,6 +71,28 @@ jobs:
     - name: Pack Swagger.Gen
       run: dotnet pack ./src/*/Swagger.Gen.csproj --no-restore -o ~/nuget  -c Release
 
+    # Swagger.Builder.Abstractions
+
+    - name: Restore Swagger.Builder.Abstractions
+      run: dotnet restore ./src/*/Swagger.Builder.Abstractions.csproj
+
+    - name: Build Swagger.Builder.Abstractions
+      run: dotnet build ./src/*/Swagger.Builder.Abstractions.csproj --no-restore  -c Release
+
+    - name: Pack Swagger.Builder.Abstractions
+      run: dotnet pack ./src/*/Swagger.Builder.Abstractions.csproj --no-restore -o ~/nuget  -c Release
+
+    # Swagger.Builder
+
+    - name: Restore Swagger.Builder
+      run: dotnet restore ./src/*/Swagger.Builder.csproj
+
+    - name: Build Swagger.Builder
+      run: dotnet build ./src/*/Swagger.Builder.csproj --no-restore  -c Release
+
+    - name: Pack Swagger.Builder
+      run: dotnet pack ./src/*/Swagger.Builder.csproj --no-restore -o ~/nuget  -c Release
+
     # Push
 
     - name: Push Packages
