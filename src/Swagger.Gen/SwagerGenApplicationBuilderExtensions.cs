@@ -1,6 +1,8 @@
 using System;
 using System.Text.Json;
+using System.Threading.Tasks;
 using GGroupp.Infra;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,11 +40,17 @@ public static class SwagerGenApplicationBuilderExtensions
         this TApplicationBuilder app, Func<IServiceProvider, SwaggerOption> optionResolver)
         where TApplicationBuilder : class, IApplicationBuilder
     {
-        return app.UseSwagger(ResolveSwaggerProvider);
+        _ = app.Use(InvokeSwaggerAsync);
+        return app;
 
-        ISwaggerProvider ResolveSwaggerProvider(IServiceProvider serviceProvider)
-            =>
-            serviceProvider.Pipe(optionResolver).Pipe(MapOption).Pipe(serviceProvider.GetSwaggerGenerator);
+        Task InvokeSwaggerAsync(HttpContext context, RequestDelegate next)
+        {
+            var options = context.RequestServices.Pipe(optionResolver).Pipe(MapOption);
+            var swaggerProvider = context.RequestServices.GetSwaggerGenerator(options);
+
+            var middleware = new SwaggerMiddleware(next, new());
+            return middleware.Invoke(context, swaggerProvider);
+        }
     }
 
     private static SwaggerGenerator GetSwaggerGenerator(this IServiceProvider serviceProvider, SwaggerGenOptions options)

@@ -1,21 +1,25 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
 
 namespace GGroupp.Infra.Swagger.Builder;
 
-partial class SwaggerProvider
+partial class SwaggerDocumentProvider
 {
-    public OpenApiDocument GetSwagger(string documentName, string? host = null, string? basePath = null)
-        =>
-        CreateDocument(lazyDocumentTemplate.Value);
+    public ValueTask<OpenApiDocument> GetDocumentAsync(string? documentName, CancellationToken cancellationToken = default)
+    {
+        var document = CreateDocument(lazyDocumentTemplate.Value, documentName);
+        return ValueTask.FromResult(document);
+    }
 
-    private static OpenApiDocument CreateDocument(OpenApiDocument template)
+    private static OpenApiDocument CreateDocument(OpenApiDocument template, string? documentName)
         =>
         new()
         {
             Info = new()
             {
                 Title = template.Info?.Title,
-                Version = template.Info?.Version,
+                Version = string.IsNullOrEmpty(documentName) ? template.Info?.Version : documentName,
                 Description = template.Info?.Description
             },
             Workspace = template.Workspace,

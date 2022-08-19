@@ -93,6 +93,17 @@ jobs:
     - name: Pack Swagger.Builder
       run: dotnet pack ./src/*/Swagger.Builder.csproj --no-restore -o ~/nuget  -c Release
 
+    # Swagger.Hub
+
+    - name: Restore Swagger.Hub
+      run: dotnet restore ./src/*/Swagger.Hub.csproj
+
+    - name: Build Swagger.Hub
+      run: dotnet build ./src/*/Swagger.Hub.csproj --no-restore  -c Release
+
+    - name: Pack Swagger.Hub
+      run: dotnet pack ./src/*/Swagger.Hub.csproj --no-restore -o ~/nuget  -c Release
+
     # Push
 
     - name: Push Packages
