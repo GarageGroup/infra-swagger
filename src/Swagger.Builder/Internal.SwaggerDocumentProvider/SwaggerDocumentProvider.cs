@@ -1,14 +1,13 @@
 using System;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace GGroupp.Infra.Swagger.Builder;
 
-internal sealed partial class SwaggerProvider : ISwaggerProvider
+internal sealed partial class SwaggerDocumentProvider : ISwaggerDocumentProvider
 {
     private readonly Lazy<OpenApiDocument> lazyDocumentTemplate;
 
-    internal SwaggerProvider(SwaggerOption? swaggerOption, ISwaggerBuilder? swaggerBuilder)
+    internal SwaggerDocumentProvider(SwaggerOption? swaggerOption, ISwaggerBuilder? swaggerBuilder)
     {
         lazyDocumentTemplate = new(CreateTemplate);
 
