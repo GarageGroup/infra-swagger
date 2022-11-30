@@ -18,8 +18,8 @@ public static class SwaggerApplicationBuilderExtensions
         this TApplicationBuilder applicationBuilder, Func<IServiceProvider, ISwaggerDocumentProvider> swaggerProviderResolver)
         where TApplicationBuilder : class, IApplicationBuilder
     {
-        _ = applicationBuilder ?? throw new ArgumentNullException(nameof(applicationBuilder));
-        _ = swaggerProviderResolver ?? throw new ArgumentNullException(nameof(swaggerProviderResolver));
+        ArgumentNullException.ThrowIfNull(applicationBuilder);
+        ArgumentNullException.ThrowIfNull(swaggerProviderResolver);
 
         var route = new RouteBuilder(applicationBuilder).MapVerb(HttpMethod.Get.Method, RouteTemplate, InnerInvokeAsync).Build();
 

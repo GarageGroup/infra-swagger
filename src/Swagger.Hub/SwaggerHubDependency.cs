@@ -13,8 +13,8 @@ public static class SwaggerHubDependency
         this Dependency<HttpMessageHandler, SwaggerHubOption> dependency, TApplicationBuilder applicationBuilder)
         where TApplicationBuilder : class, IApplicationBuilder
     {
-        _ = dependency ?? throw new ArgumentNullException(nameof(dependency));
-        _ = applicationBuilder ?? throw new ArgumentNullException(nameof(applicationBuilder));
+        ArgumentNullException.ThrowIfNull(dependency);
+        ArgumentNullException.ThrowIfNull(applicationBuilder);
 
         var documentProviderDependency = dependency.With(ResolveLoggerFactory).Fold<ISwaggerDocumentProvider>(HubSwaggerDocumentProvider.Create);
         return applicationBuilder.UseSwagger(documentProviderDependency.Resolve);

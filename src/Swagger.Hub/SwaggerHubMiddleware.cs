@@ -3,6 +3,7 @@ using System.Net.Http;
 using GGroupp.Infra;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using PrimeFuncPack;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -14,9 +15,9 @@ public static class SwaggerHubMiddleware
         Func<IServiceProvider, SwaggerHubOption> optionResolver)
         where TApplicationBuilder : class, IApplicationBuilder
     {
-        _ = applicationBuilder ?? throw new ArgumentNullException(nameof(applicationBuilder));
-        _ = messageHandlerResolver ?? throw new ArgumentNullException(nameof(messageHandlerResolver));
-        _ = optionResolver ?? throw new ArgumentNullException(nameof(optionResolver));
+        ArgumentNullException.ThrowIfNull(applicationBuilder);
+        ArgumentNullException.ThrowIfNull(messageHandlerResolver);
+        ArgumentNullException.ThrowIfNull(optionResolver);
 
         return applicationBuilder.UseSwagger(ResolveProvider);
 

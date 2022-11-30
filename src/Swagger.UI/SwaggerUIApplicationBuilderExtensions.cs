@@ -12,8 +12,7 @@ public static class SwaggerUIApplicationBuilderExtensions
         this TApplicationBuilder app, string swaggerSectionName = "Swagger")
         where TApplicationBuilder : class, IApplicationBuilder
     {
-        _ = app ?? throw new ArgumentNullException(nameof(app));
-
+        ArgumentNullException.ThrowIfNull(app);
         return app.InnerUseSwaggerUI(ResolveOption);
 
         SwaggerOption ResolveOption(IServiceProvider serviceProvider)
@@ -25,8 +24,8 @@ public static class SwaggerUIApplicationBuilderExtensions
         this TApplicationBuilder app, Func<IServiceProvider, SwaggerOption> optionResolver)
         where TApplicationBuilder : class, IApplicationBuilder
     {
-        _ = app ?? throw new ArgumentNullException(nameof(app));
-        _ = optionResolver ?? throw new ArgumentNullException(nameof(optionResolver));
+        ArgumentNullException.ThrowIfNull(app);
+        ArgumentNullException.ThrowIfNull(optionResolver);
 
         return app.InnerUseSwaggerUI(optionResolver);
     }
