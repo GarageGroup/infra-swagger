@@ -36,7 +36,7 @@ partial class OpenApiDocumentExtensions
                     continue;
                 }
 
-                yield return new OpenApiServer
+                yield return new()
                 {
                     Url = serverAddress.AbsoluteUri
                 };
