@@ -19,23 +19,7 @@ internal sealed partial class SwaggerDocumentProvider : ISwaggerDocumentProvider
                 return document;
             }
 
-            document.Info ??= new();
-
-            if (string.IsNullOrEmpty(swaggerOption.ApiName) is false)
-            {
-                document.Info.Title = swaggerOption.ApiName;
-            }
-
-            if (string.IsNullOrEmpty(swaggerOption.ApiVersion) is false)
-            {
-                document.Info.Version = swaggerOption.ApiVersion;
-            }
-
-            if (string.IsNullOrEmpty(swaggerOption.Description) is false)
-            {
-                document.Info.Description = swaggerOption.Description;
-            }
-
+            document.Info = swaggerOption.InitializeOpenApiInfo();
             return document;
         }
     }
