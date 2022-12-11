@@ -24,12 +24,7 @@ partial class HubSwaggerDocumentProvider
     {
         var swagger = new OpenApiDocument
         {
-            Info = new OpenApiInfo
-            {
-                Title = option.Option.ApiName,
-                Version = string.IsNullOrEmpty(documentName) ?  option.Option.ApiVersion : documentName,
-                Description = option.Option.Description
-            }
+            Info = option.Option.InitializeOpenApiInfo()
         };
 
         if (option.Documents.Any() is false)

@@ -68,13 +68,7 @@ public static class SwagerGenApplicationBuilderExtensions
     private static SwaggerGenOptions MapOption(SwaggerOption option)
     {
         var options = new SwaggerGenOptions();
-
-        options.SwaggerDoc(option.ApiVersion, new()
-        {
-            Title = option.ApiName,
-            Description = option.Description,
-            Version = option.ApiVersion
-        });
+        options.SwaggerDoc(option.ApiVersion, option.InitializeOpenApiInfo());
 
         return options;
     }

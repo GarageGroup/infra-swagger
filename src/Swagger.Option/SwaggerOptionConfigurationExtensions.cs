@@ -8,13 +8,19 @@ public static class SwaggerOptionConfigurationExtensions
     public static SwaggerOption GetSwaggerOption(this IConfiguration configuration, string sectionName = "Swagger")
     {
         ArgumentNullException.ThrowIfNull(configuration);
-        return configuration.GetSection(sectionName).GetSwaggerOption();
+        return configuration.GetSection(sectionName).InnerGetSwaggerOption(string.Empty);
     }
 
-    private static SwaggerOption GetSwaggerOption(this IConfigurationSection section)
+    public static SwaggerOption GetSwaggerOptionWithPrefix(this IConfiguration configuration, string prefix = "Swagger")
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+        return configuration.InnerGetSwaggerOption(prefix);
+    }
+
+    private static SwaggerOption InnerGetSwaggerOption(this IConfiguration section, string prefix)
         =>
         new(
-            apiName: section["ApiName"] ?? string.Empty,
-            apiVersion: section["ApiVersion"] ?? string.Empty,
-            description: section["Description"]);
+            apiName: section[prefix + "ApiName"] ?? string.Empty,
+            apiVersion: section[prefix + "ApiVersion"] ?? string.Empty,
+            description: section[prefix + "Description"]);
 }

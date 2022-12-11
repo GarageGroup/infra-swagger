@@ -8,13 +8,13 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>GGroupp.Infra</RootNamespace>
     <AssemblyName>GGroupp.Infra.Swagger.Builder</AssemblyName>
-    <Version>3.1.0</Version>
+    <Version>3.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GGroupp.Infra.Swagger.Builder.Abstractions" Version="2.1.0" />
-    <PackageReference Include="GGroupp.Infra.Swagger.Core" Version="3.1.0" />
-    <PackageReference Include="GGroupp.Infra.Swagger.Option" Version="2.1.0" />
+    <PackageReference Include="GGroupp.Infra.Swagger.Builder.Abstractions" Version="2.1.1" />
+    <PackageReference Include="GGroupp.Infra.Swagger.Core" Version="3.1.1" />
+    <PackageReference Include="GGroupp.Infra.Swagger.Option" Version="2.2.0" />
   </ItemGroup>
 
 </Project>

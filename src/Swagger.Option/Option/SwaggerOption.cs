@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace GGroupp.Infra;
@@ -23,4 +24,10 @@ public sealed record class SwaggerOption
     public string ApiVersion { get; }
 
     public string? Description { get; }
+
+    public Uri? TermsOfService { get; init; }
+
+    public SwaggerContactOption? Contact { get; init; }
+
+    public SwaggerLicenseOption? License { get; init; }
 }
