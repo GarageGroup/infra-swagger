@@ -20,7 +20,19 @@ partial class SwaggerDocumentProvider
             {
                 Title = template.Info?.Title,
                 Version = string.IsNullOrEmpty(documentName) ? template.Info?.Version : documentName,
-                Description = template.Info?.Description
+                Description = template.Info?.Description,
+                TermsOfService = template.Info?.TermsOfService,
+                Contact = template.Info?.Contact is null ? null : new()
+                {
+                    Name = template.Info?.Contact.Name,
+                    Email = template.Info?.Contact.Email,
+                    Url = template.Info?.Contact.Url
+                },
+                License = template.Info?.License is null ? null : new()
+                {
+                    Name = template.Info?.License.Name,
+                    Url = template.Info?.License.Url
+                }
             },
             Workspace = template.Workspace,
             Servers = template.Servers,
