@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using GGroupp.Infra;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,12 +9,14 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class SwaggerUIApplicationBuilderExtensions
 {
+    private const string DescriptionStandardFontSize = "font-size: 0.8em !important;";
+
     public static TApplicationBuilder UseStandardSwaggerUI<TApplicationBuilder>(
         this TApplicationBuilder app, string swaggerSectionName = "Swagger")
         where TApplicationBuilder : class, IApplicationBuilder
     {
         ArgumentNullException.ThrowIfNull(app);
-        return app.InnerUseSwaggerUI(ResolveOption);
+        return app.InnerUseSwaggerUI(ResolveOption, AddStandardStyles);
 
         SwaggerOption ResolveOption(IServiceProvider serviceProvider)
             =>
@@ -27,11 +30,22 @@ public static class SwaggerUIApplicationBuilderExtensions
         ArgumentNullException.ThrowIfNull(app);
         ArgumentNullException.ThrowIfNull(optionResolver);
 
-        return app.InnerUseSwaggerUI(optionResolver);
+        return app.InnerUseSwaggerUI(optionResolver, AddStandardStyles);
+    }
+
+    public static TApplicationBuilder UseSwaggerUI<TApplicationBuilder>(
+        this TApplicationBuilder app, Func<IServiceProvider, SwaggerOption> optionResolver, Action<SwaggerUIOptions> setupSwaggerUI)
+        where TApplicationBuilder : class, IApplicationBuilder
+    {
+        ArgumentNullException.ThrowIfNull(app);
+        ArgumentNullException.ThrowIfNull(optionResolver);
+        ArgumentNullException.ThrowIfNull(setupSwaggerUI);
+
+        return app.InnerUseSwaggerUI(optionResolver, setupSwaggerUI);
     }
 
     private static TApplicationBuilder InnerUseSwaggerUI<TApplicationBuilder>(
-        this TApplicationBuilder app, Func<IServiceProvider, SwaggerOption> optionResolver)
+        this TApplicationBuilder app, Func<IServiceProvider, SwaggerOption> optionResolver, Action<SwaggerUIOptions>? setupSwaggerUI = null)
         where TApplicationBuilder : IApplicationBuilder
     {
         _ = app.UseSwaggerUI(SetupSwaggerUI);
@@ -41,6 +55,21 @@ public static class SwaggerUIApplicationBuilderExtensions
         {
             var option = optionResolver.Invoke(app.ApplicationServices);
             options.SwaggerEndpoint($"/swagger/{option.ApiVersion}/swagger.json", option.ApiName);
+
+            setupSwaggerUI?.Invoke(options);
         }
     }
+
+    private static void AddStandardStyles(SwaggerUIOptions options)
+        =>
+        options.HeadContent = new StringBuilder(options.HeadContent)
+            .AppendLine("<style>")
+            .AppendLine("\t").Append(".renderedMarkdown p {")
+            .AppendLine("\t\t").Append(DescriptionStandardFontSize)
+            .AppendLine("\t").Append('}')
+            .AppendLine("\t").Append(".property.primitive {")
+            .AppendLine("\t\t").Append(DescriptionStandardFontSize)
+            .AppendLine("\t").Append('}')
+            .AppendLine("</style>")
+            .ToString();
 }
