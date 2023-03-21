@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -12,9 +13,11 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class SwaggerApplicationBuilderExtensions
 {
-    private const string RouteTemplateJson = "/swagger/{documentName}/swagger.json";
+    private const string FormatRouteName = "format";
 
-    private const string RouteTemplateYaml = "/swagger/{documentName}/swagger.yaml";
+    private const string RouteTemplate = "/swagger/swagger.{" + FormatRouteName + "}";
+
+    private static readonly string[] YamlFormats = new[] { "yaml", "yml" };
 
     public static TApplicationBuilder UseSwagger<TApplicationBuilder>(
         this TApplicationBuilder applicationBuilder, Func<IServiceProvider, ISwaggerDocumentProvider> swaggerProviderResolver)
@@ -23,30 +26,22 @@ public static class SwaggerApplicationBuilderExtensions
         ArgumentNullException.ThrowIfNull(applicationBuilder);
         ArgumentNullException.ThrowIfNull(swaggerProviderResolver);
 
-        var route = new RouteBuilder(applicationBuilder)
-            .MapVerb(HttpMethod.Get.Method, RouteTemplateJson, InnerInvokeJsonAsync)
-            .MapVerb(HttpMethod.Get.Method, RouteTemplateYaml, InnerInvokeYamlAsync)
-            .Build();
+        var route = new RouteBuilder(applicationBuilder).MapVerb(HttpMethod.Get.Method, RouteTemplate, InnerInvokeAsync).Build();
 
         _ = applicationBuilder.UseRouter(route);
         return applicationBuilder;
 
-        Task InnerInvokeJsonAsync(HttpContext context)
+        Task InnerInvokeAsync(HttpContext context)
             =>
-            context.InvokeAsync(swaggerProviderResolver, OpenApiFormat.Json);
-
-        Task InnerInvokeYamlAsync(HttpContext context)
-            =>
-            context.InvokeAsync(swaggerProviderResolver, OpenApiFormat.Yaml);
+            context.InvokeAsync(swaggerProviderResolver);
     }
 
-    private static async Task InvokeAsync(
-        this HttpContext httpContext, Func<IServiceProvider, ISwaggerDocumentProvider> providerResolver, OpenApiFormat format)
+    private static async Task InvokeAsync(this HttpContext httpContext, Func<IServiceProvider, ISwaggerDocumentProvider> providerResolver)
     {
-        var documentName = httpContext.GetDocumentName() ?? string.Empty;
+        var format = httpContext.GetOpenApiFormat();
 
-        var swaggerHubProvider = providerResolver.Invoke(httpContext.RequestServices);
-        var document = await swaggerHubProvider.GetDocumentAsync(documentName, httpContext.RequestAborted).ConfigureAwait(false);
+        var swaggerDocumentProvider = providerResolver.Invoke(httpContext.RequestServices);
+        var document = await swaggerDocumentProvider.GetDocumentAsync(string.Empty, httpContext.RequestAborted).ConfigureAwait(false);
 
         var json = document.Serialize(OpenApiSpecVersion.OpenApi3_0, format);
 
@@ -56,7 +51,25 @@ public static class SwaggerApplicationBuilderExtensions
         await httpContext.Response.WriteAsync(json, httpContext.RequestAborted).ConfigureAwait(false);
     }
 
-    private static string? GetDocumentName(this HttpContext httpContext)
-        =>
-        httpContext.GetRouteData().Values.TryGetValue("documentName", out var documentName) ? documentName?.ToString() : default;
+    private static OpenApiFormat GetOpenApiFormat(this HttpContext httpContext)
+    {
+        string? format = null;
+
+        if (httpContext.GetRouteData().Values.TryGetValue(FormatRouteName, out var value))
+        {
+            format = value?.ToString();
+        }
+
+        if (string.IsNullOrEmpty(format))
+        {
+            return default;
+        }
+
+        if (YamlFormats.Contains(format, StringComparer.InvariantCultureIgnoreCase))
+        {
+            return OpenApiFormat.Yaml;
+        }
+
+        return OpenApiFormat.Json;
+    }
 }
