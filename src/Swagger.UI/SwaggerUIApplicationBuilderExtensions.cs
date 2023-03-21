@@ -54,7 +54,7 @@ public static class SwaggerUIApplicationBuilderExtensions
         void SetupSwaggerUI(SwaggerUIOptions options)
         {
             var option = optionResolver.Invoke(app.ApplicationServices);
-            options.SwaggerEndpoint($"/swagger/{option.ApiVersion}/swagger.json", option.ApiName);
+            options.SwaggerEndpoint("/swagger/swagger.json", option.ApiName);
 
             setupSwaggerUI?.Invoke(options);
         }

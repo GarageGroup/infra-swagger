@@ -5,7 +5,7 @@ namespace GGroupp.Infra;
 
 public sealed record class SwaggerDocumentOption
 {
-    private const string DefaultDocumentUrl = "/swagger/v1/swagger.json";
+    private const string DefaultDocumentUrl = "/swagger/swagger.json";
 
     public SwaggerDocumentOption(Uri baseAddress, [AllowNull] string documentUrl = DefaultDocumentUrl, Uri? proxyAddress = null)
     {
