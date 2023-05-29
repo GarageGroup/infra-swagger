@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.OpenApi.Models;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 partial class OpenApiDocumentExtensions
 {

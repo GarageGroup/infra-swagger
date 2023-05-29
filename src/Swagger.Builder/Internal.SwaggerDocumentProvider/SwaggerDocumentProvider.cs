@@ -1,7 +1,7 @@
 using System;
 using Microsoft.OpenApi.Models;
 
-namespace GGroupp.Infra.Swagger.Builder;
+namespace GarageGroup.Infra.Swagger.Builder;
 
 internal sealed partial class SwaggerDocumentProvider : ISwaggerDocumentProvider
 {

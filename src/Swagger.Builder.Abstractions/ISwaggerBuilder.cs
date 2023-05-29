@@ -1,7 +1,7 @@
 using System;
 using Microsoft.OpenApi.Models;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 public interface ISwaggerBuilder
 {

@@ -1,5 +1,5 @@
 using System;
-using GGroupp.Infra;
+using GarageGroup.Infra;
 
 namespace Microsoft.Extensions.Configuration;
 
