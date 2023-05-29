@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 internal sealed class EmptyApiDescriptionGroupCollectionProvider : IApiDescriptionGroupCollectionProvider
 {

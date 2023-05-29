@@ -1,6 +1,6 @@
 using System;
-using GGroupp.Infra;
-using GGroupp.Infra.Swagger.Builder;
+using GarageGroup.Infra;
+using GarageGroup.Infra.Swagger.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

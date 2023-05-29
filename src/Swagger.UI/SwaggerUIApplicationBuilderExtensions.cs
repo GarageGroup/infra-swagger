@@ -1,6 +1,6 @@
 using System;
 using System.Text;
-using GGroupp.Infra;
+using GarageGroup.Infra;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerUI;

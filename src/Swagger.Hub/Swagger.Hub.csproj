@@ -6,15 +6,16 @@
     <Nullable>enable</Nullable>
     <InvariantGlobalization>true</InvariantGlobalization>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <RootNamespace>GGroupp.Infra</RootNamespace>
-    <AssemblyName>GGroupp.Infra.Swagger.Hub</AssemblyName>
+    <RootNamespace>GarageGroup.Infra</RootNamespace>
+    <AssemblyName>GarageGroup.Infra.Swagger.Hub</AssemblyName>
     <Version>2.4.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GGroupp.Infra.Swagger.Core" Version="3.3.0" />
-    <PackageReference Include="GGroupp.Infra.Swagger.Option" Version="2.3.1" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.3" />
+    <PackageReference Include="GarageGroup.Infra.Swagger.Core" Version="3.3.0" />
+    <PackageReference Include="GarageGroup.Infra.Swagger.Option" Version="2.3.1" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.4" />
+    <PackageReference Include="PrimeFuncPack.Core.FlatArray" Version="1.1.0" />
     <PackageReference Include="PrimeFuncPack.Dependency.Core" Version="2.0.2" />
   </ItemGroup>
 

@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 public sealed record class SwaggerHubOption
 {
@@ -11,13 +10,13 @@ public sealed record class SwaggerHubOption
         =>
         DefaultOption = new(apiName: "Swagger HUB API");
 
-    public SwaggerHubOption(SwaggerOption option, IReadOnlyCollection<SwaggerDocumentOption> documents)
+    public SwaggerHubOption(SwaggerOption option, FlatArray<SwaggerDocumentOption> documents)
     {
         Option = option ?? DefaultOption;
-        Documents = documents ?? Array.Empty<SwaggerDocumentOption>();
+        Documents = documents;
     }
 
     public SwaggerOption Option { get; }
 
-    public IReadOnlyCollection<SwaggerDocumentOption> Documents { get; }
+    public FlatArray<SwaggerDocumentOption> Documents { get; }
 }

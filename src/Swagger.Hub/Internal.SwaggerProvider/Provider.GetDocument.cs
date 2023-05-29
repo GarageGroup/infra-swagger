@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 partial class HubSwaggerDocumentProvider
 {
@@ -17,22 +17,22 @@ partial class HubSwaggerDocumentProvider
             return ValueTask.FromCanceled<OpenApiDocument>(cancellationToken);
         }
 
-        return InnerGetDocumentAsync(documentName, cancellationToken);
+        return InnerGetDocumentAsync(cancellationToken);
     }
 
-    private async ValueTask<OpenApiDocument> InnerGetDocumentAsync(string? documentName, CancellationToken cancellationToken)
+    private async ValueTask<OpenApiDocument> InnerGetDocumentAsync(CancellationToken cancellationToken)
     {
         var swagger = new OpenApiDocument
         {
             Info = option.Option.InitializeOpenApiInfo()
         };
 
-        if (option.Documents.Any() is false)
+        if (option.Documents.IsEmpty)
         {
             return swagger;
         }
 
-        var documents = await Task.WhenAll(option.Documents.Select(InnerGetDocumentAsync)).ConfigureAwait(false);
+        var documents = await Task.WhenAll(option.Documents.AsEnumerable().Select(InnerGetDocumentAsync)).ConfigureAwait(false);
 
         foreach (var document in documents)
         {
@@ -96,9 +96,16 @@ partial class HubSwaggerDocumentProvider
                 string.Join(';', diagnostic.Warnings.Select(GetErrorMessage)));
         }
 
+        document = document.ApplyUrlSuffix(documentOption.BaseAddress, documentOption.UrlSuffix);
+
+        if (documentOption.IsDirectCall is false)
+        {
+            return document;
+        }
+
         var servers = new[]
         {
-            documentOption.ProxyAddress ?? documentOption.BaseAddress
+            documentOption.BaseAddress
         };
 
         return document.SetPathsServers(servers);

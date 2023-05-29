@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
 
-namespace GGroupp.Infra.Swagger.Builder;
+namespace GarageGroup.Infra.Swagger.Builder;
 
 partial class SwaggerDocumentProvider
 {

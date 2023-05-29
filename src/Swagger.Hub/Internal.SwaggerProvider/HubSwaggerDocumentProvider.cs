@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Readers;
 using Microsoft.OpenApi.Readers.Interface;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
-internal sealed partial class HubSwaggerDocumentProvider : ISwaggerDocumentProvider
+internal sealed partial class HubSwaggerDocumentProvider : IHubSwaggerDocumentProvider
 {
     public static HubSwaggerDocumentProvider Create(HttpMessageHandler httpMessageHandler, SwaggerHubOption option, ILoggerFactory? loggerFactory)
     {
-        _ = httpMessageHandler ?? throw new ArgumentNullException(nameof(httpMessageHandler));
-        _ = option ?? throw new ArgumentNullException(nameof(option));
+        ArgumentNullException.ThrowIfNull(httpMessageHandler);
+        ArgumentNullException.ThrowIfNull(option);
 
         return new(httpMessageHandler, option, loggerFactory?.CreateLogger<HubSwaggerDocumentProvider>());
     }

@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GGroupp.Infra;
+namespace GarageGroup.Infra;
 
 internal static partial class OpenApiDocumentExtensions
 {
+    private const char Slash = '/';
+
     private static IEnumerable<T> Join<T>(this IEnumerable<T>? source, IEnumerable<T>? other)
     {
         if (other?.Any() is not true)
