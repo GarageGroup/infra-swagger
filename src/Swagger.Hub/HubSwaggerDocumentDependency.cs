@@ -4,6 +4,7 @@ using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using PrimeFuncPack;
 
 namespace GarageGroup.Infra;
@@ -35,15 +36,15 @@ public static class HubSwaggerDocumentDependency
             documents: configuration.GetSection(sectionName).GetSection("Documents").GetChildren().Select(GetDocumentOption).ToFlatArray());
 
         static SwaggerDocumentOption GetDocumentOption(IConfigurationSection documentSection)
-        {
-            return new(
+            =>
+            new(
                 baseAddress: documentSection.GetUri("BaseAddressUrl"),
                 documentUrl: documentSection["DocumentUrl"])
             {
                 UrlSuffix = documentSection["UrlSuffix"],
-                IsDirectCall = documentSection.GetBoolean("IsDirectCall")
+                IsDirectCall = documentSection.GetBoolean("IsDirectCall"),
+                Parameters = documentSection.GetSection("Parameters").GetChildren().Select(GetOrThrow<OpenApiParameter>).ToFlatArray()
             };
-        }
     }
 
     private static ILoggerFactory? ResolveLoggerFactory(IServiceProvider serviceProvider)
@@ -76,4 +77,8 @@ public static class HubSwaggerDocumentDependency
 
         return string.Equals("true", value, StringComparison.InvariantCultureIgnoreCase);
     }
+
+    private static T GetOrThrow<T>(this IConfigurationSection section)
+        =>
+        section.Get<T>() ?? throw new InvalidOperationException($"Configuration path '{section.Path}' value must be a '{typeof(T)}' value");
 }
