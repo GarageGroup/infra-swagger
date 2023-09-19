@@ -77,7 +77,7 @@ partial class HubSwaggerDocumentProvider
         }
 
         var document = OpenApiReader.Read(responseMessage, out var diagnostic);
-        
+
         if (diagnostic?.Errors.Any() is true)
         {
             logger?.LogError(
@@ -96,7 +96,9 @@ partial class HubSwaggerDocumentProvider
                 string.Join(';', diagnostic.Warnings.Select(GetErrorMessage)));
         }
 
-        document = document.ApplyUrlSuffix(documentOption.BaseAddress, documentOption.UrlSuffix);
+        document = document
+            .ApplyUrlSuffix(documentOption.BaseAddress, documentOption.UrlSuffix)
+            .JoinParameters(documentOption.Parameters);
 
         if (documentOption.IsDirectCall is false)
         {

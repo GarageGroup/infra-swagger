@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.OpenApi.Models;
 
 namespace GarageGroup.Infra;
 
@@ -20,4 +21,6 @@ public sealed record class SwaggerDocumentOption
     public string? UrlSuffix { get; init; }
 
     public bool IsDirectCall { get; init; }
+
+    public FlatArray<OpenApiParameter> Parameters { get; init; }
 }
