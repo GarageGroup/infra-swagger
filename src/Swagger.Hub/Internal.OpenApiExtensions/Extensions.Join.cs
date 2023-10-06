@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.OpenApi.Models;
 
@@ -14,17 +16,13 @@ partial class OpenApiDocumentExtensions
 
         if (other.Paths?.Count > 0)
         {
-            source.Paths = source.Paths.Join(other.Paths).ToDictionary<OpenApiPaths, OpenApiPathItem>();
+            var otherPaths = other.InnerGetOpenApiPathsWithSecurity(other.SecurityRequirements?.ToArray());
+            source.Paths = source.Paths.Join(otherPaths).ToDictionary<OpenApiPaths, OpenApiPathItem>();
         }
 
         if (other.Servers?.Count > 0)
         {
             source.Servers = source.Servers.Join(other.Servers).ToList();
-        }
-
-        if (other.SecurityRequirements?.Count > 0)
-        {
-            source.SecurityRequirements = source.SecurityRequirements.Join(other.SecurityRequirements).ToList();
         }
 
         if (other.Tags?.Count > 0)
@@ -105,5 +103,37 @@ partial class OpenApiDocumentExtensions
         }
 
         return result;
+    }
+
+    private static OpenApiPaths InnerGetOpenApiPathsWithSecurity(
+        this OpenApiDocument document, [AllowNull] IReadOnlyList<OpenApiSecurityRequirement> securityRequirements)
+    {
+        if (securityRequirements?.Count is not > 0)
+        {
+            return document.Paths;
+        }
+
+        foreach (var path in document.Paths.Values.SelectMany(GetOperations))
+        {
+            foreach (var security in securityRequirements)
+            {
+                if (path.Security.Contains(security))
+                {
+                    continue;
+                }
+
+                path.Security.Add(security);
+            }
+        }
+
+        return document.Paths;
+
+        static IEnumerable<OpenApiOperation> GetOperations(OpenApiPathItem pathItem)
+            =>
+            pathItem.Operations?.Select(GetValue) ?? Enumerable.Empty<OpenApiOperation>();
+
+        static TValue GetValue<TKey, TValue>(KeyValuePair<TKey, TValue> pair)
+            =>
+            pair.Value;
     }
 }
