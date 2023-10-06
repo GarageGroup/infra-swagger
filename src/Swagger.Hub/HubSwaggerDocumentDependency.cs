@@ -31,22 +31,10 @@ public static class HubSwaggerDocumentDependency
     }
 
     private static SwaggerHubOption GetSwaggerHubOption(this IConfiguration configuration, string sectionName)
-    {
-        return new(
+        =>
+        new(
             option: configuration.GetSwaggerOption(sectionName),
-            documents: configuration.GetSection(sectionName).GetSection("Documents").GetChildren().Select(GetDocumentOption).ToFlatArray());
-
-        static SwaggerDocumentOption GetDocumentOption(IConfigurationSection documentSection)
-            =>
-            new(
-                baseAddress: documentSection.GetUri("BaseAddressUrl"),
-                documentUrl: documentSection["DocumentUrl"])
-            {
-                UrlSuffix = documentSection["UrlSuffix"],
-                IsDirectCall = documentSection.GetBoolean("IsDirectCall"),
-                SecurityRequirements = documentSection.GetSection("SecurityRequirements").GetSecurityRequirements()
-            };
-    }
+            documents: configuration.GetSection(sectionName).GetSection("Documents").GetDocumentOptions().ToFlatArray());
 
     private static ILoggerFactory? ResolveLoggerFactory(IServiceProvider serviceProvider)
         =>
@@ -71,12 +59,33 @@ public static class HubSwaggerDocumentDependency
     private static bool GetBoolean(this IConfigurationSection section, string key)
     {
         var value = section[key];
+
         if (string.IsNullOrEmpty(value))
         {
             return false;
         }
 
         return string.Equals("true", value, StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    private static IEnumerable<SwaggerDocumentOption> GetDocumentOptions(this IConfigurationSection section)
+    {
+        foreach (var documentSection in section.GetChildren())
+        {
+            if (documentSection.GetBoolean("IsDisabled"))
+            {
+                continue;
+            }
+
+            yield return new(
+                baseAddress: documentSection.GetUri("BaseAddressUrl"),
+                documentUrl: documentSection["DocumentUrl"])
+            {
+                UrlSuffix = documentSection["UrlSuffix"],
+                IsDirectCall = documentSection.GetBoolean("IsDirectCall"),
+                SecurityRequirements = documentSection.GetSection("SecurityRequirements").GetSecurityRequirements()
+            };
+        }
     }
 
     private static FlatArray<KeyValuePair<string, OpenApiSecurityScheme>> GetSecurityRequirements(this IConfigurationSection section)
