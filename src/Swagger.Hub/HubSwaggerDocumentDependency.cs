@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
@@ -43,7 +44,7 @@ public static class HubSwaggerDocumentDependency
             {
                 UrlSuffix = documentSection["UrlSuffix"],
                 IsDirectCall = documentSection.GetBoolean("IsDirectCall"),
-                Parameters = documentSection.GetSection("Parameters").GetChildren().Select(GetOrThrow<OpenApiParameter>).ToFlatArray()
+                SecurityRequirements = documentSection.GetSection("SecurityRequirements").GetSecurityRequirements()
             };
     }
 
@@ -78,7 +79,30 @@ public static class HubSwaggerDocumentDependency
         return string.Equals("true", value, StringComparison.InvariantCultureIgnoreCase);
     }
 
-    private static T GetOrThrow<T>(this IConfigurationSection section)
-        =>
-        section.Get<T>() ?? throw new InvalidOperationException($"Configuration path '{section.Path}' value must be a '{typeof(T)}' value");
+    private static FlatArray<KeyValuePair<string, OpenApiSecurityScheme>> GetSecurityRequirements(this IConfigurationSection section)
+    {
+        var values = section.Get<Dictionary<string, OpenApiSecurityScheme>>()?.ToArray();
+
+        if (values?.Length is not > 0)
+        {
+            return default;
+        }
+
+        var builder = FlatArray<KeyValuePair<string, OpenApiSecurityScheme>>.Builder.OfLength(values.Length);
+
+        for (var i = 0; i < values.Length; i++)
+        {
+            var item = values[i];
+
+            item.Value.Reference ??= new()
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = item.Key
+            };
+
+            builder[i] = item;
+        }
+
+        return builder.MoveToFlatArray();
+    }
 }

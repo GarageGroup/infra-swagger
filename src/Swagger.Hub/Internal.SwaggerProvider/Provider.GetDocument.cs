@@ -60,7 +60,7 @@ partial class HubSwaggerDocumentProvider
         {
             logger?.LogError(
                 "A swagger document '{url}' was not loaded. Status: {statusCode}, message: {responseMessage}",
-                new Uri(documentOption.BaseAddress, documentOption.DocumentUrl),
+                CombineUri(documentOption.BaseAddress, documentOption.DocumentUrl),
                 documentResponse.StatusCode,
                 responseMessage);
 
@@ -71,7 +71,7 @@ partial class HubSwaggerDocumentProvider
         {
             logger?.LogError(
                 "A swagger document '{url}' was empty",
-                new Uri(documentOption.BaseAddress, documentOption.DocumentUrl));
+                CombineUri(documentOption.BaseAddress, documentOption.DocumentUrl));
 
             return null;
         }
@@ -82,7 +82,7 @@ partial class HubSwaggerDocumentProvider
         {
             logger?.LogError(
                 "A swagger document '{url}' was not loaded because of errors: {errors}",
-                new Uri(documentOption.BaseAddress, documentOption.DocumentUrl),
+                CombineUri(documentOption.BaseAddress, documentOption.DocumentUrl),
                 string.Join(';', diagnostic.Errors.Select(GetErrorMessage)));
 
             return null;
@@ -92,13 +92,13 @@ partial class HubSwaggerDocumentProvider
         {
             logger?.LogWarning(
                 "A swagger document '{url}' was loaded with warnings: {warnings}",
-                new Uri(documentOption.BaseAddress, documentOption.DocumentUrl),
+                CombineUri(documentOption.BaseAddress, documentOption.DocumentUrl),
                 string.Join(';', diagnostic.Warnings.Select(GetErrorMessage)));
         }
 
         document = document
             .ApplyUrlSuffix(documentOption.BaseAddress, documentOption.UrlSuffix)
-            .JoinParameters(documentOption.Parameters);
+            .JoinSecurityRequirements(documentOption.SecurityRequirements);
 
         if (documentOption.IsDirectCall is false)
         {
@@ -116,4 +116,8 @@ partial class HubSwaggerDocumentProvider
             =>
             error.Message;
     }
+
+    private static string CombineUri(Uri baseAddress, string documentUrl)
+        =>
+        new Uri(baseAddress, documentUrl).ToString();
 }

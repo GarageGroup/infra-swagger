@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.OpenApi.Models;
 
@@ -22,5 +23,5 @@ public sealed record class SwaggerDocumentOption
 
     public bool IsDirectCall { get; init; }
 
-    public FlatArray<OpenApiParameter> Parameters { get; init; }
+    public FlatArray<KeyValuePair<string, OpenApiSecurityScheme>> SecurityRequirements { get; init; }
 }
