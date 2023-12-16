@@ -5,12 +5,23 @@ namespace Microsoft.Extensions.Configuration;
 
 public static class SwaggerOptionConfigurationExtensions
 {
+    private const string InfoSectionName = "Info";
+
     public static SwaggerOption GetSwaggerOption(this IConfiguration configuration, string sectionName = "Swagger")
     {
         ArgumentNullException.ThrowIfNull(configuration);
-        return configuration.GetSection(sectionName).InnerGetSwaggerOption(string.Empty);
+
+        var section = configuration.GetSection(sectionName);
+
+        if (section.Exists() is false)
+        {
+            section = configuration.GetSection(InfoSectionName);
+        }
+
+        return section.InnerGetSwaggerOption(string.Empty);
     }
 
+    [Obsolete("This method is obsolete. Use configuration.GetSwaggerOption")]
     public static SwaggerOption GetSwaggerOptionWithPrefix(this IConfiguration configuration, string prefix = "Swagger")
     {
         ArgumentNullException.ThrowIfNull(configuration);
