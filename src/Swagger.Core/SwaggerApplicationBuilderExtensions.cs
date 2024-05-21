@@ -13,11 +13,17 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class SwaggerApplicationBuilderExtensions
 {
-    private const string FormatRouteName = "format";
+    private const string FormatRouteName
+        =
+        "format";
 
-    private const string RouteTemplate = "/swagger/swagger.{" + FormatRouteName + "}";
+    private const string RouteTemplate
+        =
+        "/swagger/swagger.{" + FormatRouteName + "}";
 
-    private static readonly string[] YamlFormats = new[] { "yaml", "yml" };
+    private static readonly string[] YamlFormats
+        =
+        ["yaml", "yml"];
 
     public static TApplicationBuilder UseSwagger<TApplicationBuilder>(
         this TApplicationBuilder applicationBuilder, Func<IServiceProvider, ISwaggerDocumentProvider> swaggerProviderResolver)

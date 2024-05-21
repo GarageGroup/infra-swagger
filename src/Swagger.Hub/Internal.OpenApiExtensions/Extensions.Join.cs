@@ -130,7 +130,7 @@ partial class OpenApiDocumentExtensions
 
         static IEnumerable<OpenApiOperation> GetOperations(OpenApiPathItem pathItem)
             =>
-            pathItem.Operations?.Select(GetValue) ?? Enumerable.Empty<OpenApiOperation>();
+            pathItem.Operations?.Select(GetValue) ?? [];
 
         static TValue GetValue<TKey, TValue>(KeyValuePair<TKey, TValue> pair)
             =>

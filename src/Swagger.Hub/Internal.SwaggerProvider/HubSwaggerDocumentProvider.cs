@@ -2,7 +2,6 @@ using System;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Readers;
-using Microsoft.OpenApi.Readers.Interface;
 
 namespace GarageGroup.Infra;
 
@@ -16,11 +15,11 @@ internal sealed partial class HubSwaggerDocumentProvider : IHubSwaggerDocumentPr
         return new(httpMessageHandler, option, loggerFactory?.CreateLogger<HubSwaggerDocumentProvider>());
     }
 
-    private static readonly IOpenApiReader<string, OpenApiDiagnostic> OpenApiReader;
+    private static readonly OpenApiStringReader OpenApiReader;
 
     static HubSwaggerDocumentProvider()
         =>
-        OpenApiReader = new OpenApiStringReader();
+        OpenApiReader = new();
 
     private HubSwaggerDocumentProvider(HttpMessageHandler httpMessageHandler, SwaggerHubOption option, ILogger? logger)
     {
