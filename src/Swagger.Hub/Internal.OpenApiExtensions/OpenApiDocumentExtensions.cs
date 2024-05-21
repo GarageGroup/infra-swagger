@@ -11,7 +11,7 @@ internal static partial class OpenApiDocumentExtensions
     {
         if (other?.Any() is not true)
         {
-            return source ?? Enumerable.Empty<T>();
+            return source ?? [];
         }
 
         if (source?.Any() is not true)

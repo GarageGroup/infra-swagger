@@ -23,7 +23,7 @@ partial class OpenApiDocumentExtensions
             =>
             new()
             {
-                [item.Value] = Array.Empty<string>()
+                [item.Value] = []
             };
     }
 }
