@@ -1,5 +1,3 @@
 namespace GarageGroup.Infra;
 
-public interface IHubSwaggerDocumentProvider : ISwaggerDocumentProvider
-{
-}
+public interface IHubSwaggerDocumentProvider : ISwaggerDocumentProvider;
