@@ -66,17 +66,6 @@ jobs:
     - name: Pack Swagger.UI
       run: dotnet pack ./src/*/Swagger.UI.csproj --no-restore -o ~/nuget  -c Release
 
-    # Swagger.Gen
-
-    - name: Restore Swagger.Gen
-      run: dotnet restore ./src/*/Swagger.Gen.csproj
-
-    - name: Build Swagger.Gen
-      run: dotnet build ./src/*/Swagger.Gen.csproj --no-restore  -c Release
-
-    - name: Pack Swagger.Gen
-      run: dotnet pack ./src/*/Swagger.Gen.csproj --no-restore -o ~/nuget  -c Release
-
     # Swagger.Builder.Abstractions
 
     - name: Restore Swagger.Builder.Abstractions

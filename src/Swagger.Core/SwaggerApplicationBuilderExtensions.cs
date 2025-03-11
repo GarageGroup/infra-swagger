@@ -51,6 +51,16 @@ public static class SwaggerApplicationBuilderExtensions
 
         var json = document.Serialize(OpenApiSpecVersion.OpenApi3_0, format);
 
+        // temporary fix: swagerUI hasn't supported OpenAPI v3.0.4 yet
+        if (format is OpenApiFormat.Json)
+        {
+            json = json.Replace("\"openapi\": \"3.0.4\"", "\"openapi\": \"3.0.1\"");
+        }
+        else if (format is OpenApiFormat.Yaml)
+        {
+            json = json.Replace("openapi: 3.0.4", "openapi: 3.0.1");
+        }
+
         httpContext.Response.StatusCode = StatusCodes.Status200OK;
         httpContext.Response.Headers["Content-Type"] = format is OpenApiFormat.Json ? MediaTypeNames.Application.Json : "application/yaml";
 
