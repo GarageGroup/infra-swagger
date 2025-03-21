@@ -18,27 +18,16 @@ public static class SwaggerOptionConfigurationExtensions
             section = configuration.GetSection(InfoSectionName);
         }
 
-        return section.InnerGetSwaggerOption(string.Empty);
-    }
-
-    [Obsolete("This method is obsolete. Use configuration.GetSwaggerOption")]
-    public static SwaggerOption GetSwaggerOptionWithPrefix(this IConfiguration configuration, string prefix = "Swagger")
-    {
-        ArgumentNullException.ThrowIfNull(configuration);
-        return configuration.InnerGetSwaggerOption(prefix);
-    }
-
-    private static SwaggerOption InnerGetSwaggerOption(this IConfiguration section, string prefix)
-        =>
-        new(
-            apiName: section[prefix + "ApiName"] ?? string.Empty,
-            apiVersion: section[prefix + "ApiVersion"] ?? string.Empty,
-            description: section[prefix + "Description"])
+        return new(
+            apiName: section["ApiName"] ?? string.Empty,
+            apiVersion: section["ApiVersion"] ?? string.Empty,
+            description: section["Description"])
         {
-            TermsOfService = section.GetUri(prefix + "TermsOfService"),
-            Contact = section.GetSwaggerContact(prefix + "Contact"),
-            License = section.GetSwaggerLicense(prefix + "License")
+            TermsOfService = section.GetUri("TermsOfService"),
+            Contact = section.GetSwaggerContact("Contact"),
+            License = section.GetSwaggerLicense("License")
         };
+    }
 
     private static SwaggerContactOption? GetSwaggerContact(this IConfiguration configuration, string sectionName)
     {
