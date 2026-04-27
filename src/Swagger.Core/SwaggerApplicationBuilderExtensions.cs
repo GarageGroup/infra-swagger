@@ -7,7 +7,6 @@ using GarageGroup.Infra;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi;
-using Microsoft.OpenApi.Extensions;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -44,20 +43,21 @@ public static class SwaggerApplicationBuilderExtensions
 
     private static async Task InvokeAsync(this HttpContext httpContext, Func<IServiceProvider, ISwaggerDocumentProvider> providerResolver)
     {
-        var format = httpContext.GetOpenApiFormat();
+        var isYaml = httpContext.IsOpenApiYamsJson();
 
         var swaggerDocumentProvider = providerResolver.Invoke(httpContext.RequestServices);
         var document = await swaggerDocumentProvider.GetDocumentAsync(string.Empty, httpContext.RequestAborted).ConfigureAwait(false);
 
-        var json = document.Serialize(OpenApiSpecVersion.OpenApi3_0, format);
+        var format = isYaml ? OpenApiConstants.Yaml : OpenApiConstants.Json;
+        var json = await document.SerializeAsync(OpenApiSpecVersion.OpenApi3_0, format, httpContext.RequestAborted).ConfigureAwait(false);
 
         httpContext.Response.StatusCode = StatusCodes.Status200OK;
-        httpContext.Response.Headers["Content-Type"] = format is OpenApiFormat.Json ? MediaTypeNames.Application.Json : "application/yaml";
+        httpContext.Response.Headers["Content-Type"] = isYaml ? MediaTypeNames.Application.Yaml : MediaTypeNames.Application.Json;
 
         await httpContext.Response.WriteAsync(json, httpContext.RequestAborted).ConfigureAwait(false);
     }
 
-    private static OpenApiFormat GetOpenApiFormat(this HttpContext httpContext)
+    private static bool IsOpenApiYamsJson(this HttpContext httpContext)
     {
         string? format = null;
 
@@ -66,16 +66,6 @@ public static class SwaggerApplicationBuilderExtensions
             format = value?.ToString();
         }
 
-        if (string.IsNullOrEmpty(format))
-        {
-            return default;
-        }
-
-        if (YamlFormats.Contains(format, StringComparer.InvariantCultureIgnoreCase))
-        {
-            return OpenApiFormat.Yaml;
-        }
-
-        return OpenApiFormat.Json;
+        return YamlFormats.Contains(format, StringComparer.InvariantCultureIgnoreCase);
     }
 }

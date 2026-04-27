@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -10,12 +10,15 @@
     <NoWarn>$(NoWarn);IDE0130;CA1859</NoWarn>
     <RootNamespace>Microsoft.AspNetCore.Builder</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Swagger.UI</AssemblyName>
-    <Version>2.9.0</Version>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GarageGroup.Infra.Swagger.Option" Version="2.6.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Swagger.Option/Swagger.Option.csproj" />
   </ItemGroup>
 
 </Project>

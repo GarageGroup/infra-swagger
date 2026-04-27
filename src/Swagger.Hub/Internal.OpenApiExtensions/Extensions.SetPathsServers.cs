@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace GarageGroup.Infra;
 
@@ -9,7 +9,7 @@ partial class OpenApiDocumentExtensions
 {
     internal static OpenApiDocument SetPathsServers(this OpenApiDocument source, IReadOnlyCollection<Uri?>? serverAddresses)
     {
-        if (serverAddresses?.Any() is not true || source.Paths?.Any() is not true)
+        if (serverAddresses?.Count is not > 0 || source.Paths?.Any() is not true)
         {
             return source;
         }
@@ -22,7 +22,7 @@ partial class OpenApiDocumentExtensions
 
         foreach (var path in source.Paths)
         {
-            path.Value.Servers = path.Value.Servers.Join(servers).ToList();
+            path.Value.Servers.Join(servers);
         }
 
         return source;

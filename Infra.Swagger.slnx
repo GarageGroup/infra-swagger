@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/.github/">
+    <File Path=".github/workflows/dotnet.yml" />
+  </Folder>
+  <Project Path="src/Swagger.Builder.Abstractions/Swagger.Builder.Abstractions.csproj" />
+  <Project Path="src/Swagger.Builder/Swagger.Builder.csproj" />
+  <Project Path="src/Swagger.Core/Swagger.Core.csproj" />
+  <Project Path="src/Swagger.Hub/Swagger.Hub.csproj" />
+  <Project Path="src/Swagger.Option/Swagger.Option.csproj" />
+  <Project Path="src/Swagger.UI/Swagger.UI.csproj" />
+</Solution>

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -10,16 +10,18 @@
     <NoWarn>$(NoWarn);IDE0130;CA1859</NoWarn>
     <RootNamespace>GarageGroup.Infra</RootNamespace>
     <AssemblyName>GarageGroup.Infra.Swagger.Hub</AssemblyName>
-    <Version>2.11.0</Version>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GarageGroup.Infra.Swagger.Core" Version="3.5.1" />
-    <PackageReference Include="GarageGroup.Infra.Swagger.Option" Version="2.6.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.3" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.23" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.6" />
     <PackageReference Include="PrimeFuncPack.Core.FlatArray" Version="1.5.1" />
     <PackageReference Include="PrimeFuncPack.Dependency.Core" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Swagger.Core/Swagger.Core.csproj" />
+    <ProjectReference Include="../Swagger.Option/Swagger.Option.csproj" />
   </ItemGroup>
 
 </Project>

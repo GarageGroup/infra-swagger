@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace GarageGroup.Infra;
 
@@ -21,7 +21,7 @@ partial class OpenApiDocumentExtensions
         var basePath = Slash + baseAddress.AbsolutePath?.Trim(Slash);
         var suffix = urlSuffix.Trim(Slash);
 
-        var paths = new Dictionary<string, OpenApiPathItem>(source.Paths.Count);
+        var paths = new Dictionary<string, IOpenApiPathItem>(source.Paths.Count);
         foreach (var path in source.Paths)
         {
             var pathKey = path.Key;
@@ -39,7 +39,7 @@ partial class OpenApiDocumentExtensions
             paths.Add(pathKey, path.Value);
         }
 
-        source.Paths = paths.ToDictionary<OpenApiPaths, OpenApiPathItem>();
+        source.Paths = paths.ToDictionary<OpenApiPaths, IOpenApiPathItem>();
         return source;
     }
 }
