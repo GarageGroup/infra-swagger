@@ -5,7 +5,7 @@ using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using PrimeFuncPack;
 
 namespace GarageGroup.Infra;
@@ -101,15 +101,7 @@ public static class HubSwaggerDocumentDependency
 
         for (var i = 0; i < values.Length; i++)
         {
-            var item = values[i];
-
-            item.Value.Reference ??= new()
-            {
-                Type = ReferenceType.SecurityScheme,
-                Id = item.Key
-            };
-
-            builder[i] = item;
+            builder[i] = values[i];
         }
 
         return builder.MoveToFlatArray();

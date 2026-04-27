@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace GarageGroup.Infra.Swagger.Builder;
 
@@ -38,7 +38,7 @@ partial class SwaggerDocumentProvider
             Servers = template.Servers,
             Paths = template.Paths,
             Components = template.Components,
-            SecurityRequirements = template.SecurityRequirements,
+            Security = template.Security,
             Tags = template.Tags,
             ExternalDocs = template.ExternalDocs,
             Extensions = template.Extensions

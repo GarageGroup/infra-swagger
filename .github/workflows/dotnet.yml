@@ -9,102 +9,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Chechout repository
-      uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v6
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: '9.0.x'
-
-     # Add NuGet Sources
+        dotnet-version: 10.0.x
 
     - name: Create Local NuGet Directory
       run: mkdir ~/nuget
 
-    - name: Add Local Nuget Source
-      run: dotnet nuget add source ~/nuget
+    - name: Restore slnx
+      run: dotnet restore
 
-    - name: Add GarageGroup NuGet Source
-      run: >
-        dotnet nuget add source ${{ vars.GG_NUGET_SOURCE_URL }}
-        -n garage
-        -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
-        -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
-        --store-password-in-clear-text
+    - name: Build slnx
+      run: dotnet build --no-restore -c Release
 
-    # Swagger.Option
-
-    - name: Restore Swagger.Option
-      run: dotnet restore ./src/*/Swagger.Option.csproj
-
-    - name: Build Swagger.Option
-      run: dotnet build ./src/*/Swagger.Option.csproj --no-restore  -c Release
-
-    - name: Pack Swagger.Option
-      run: dotnet pack ./src/*/Swagger.Option.csproj --no-restore -o ~/nuget  -c Release
-
-    # Swagger.Core
-
-    - name: Restore Swagger.Core
-      run: dotnet restore ./src/*/Swagger.Core.csproj
-
-    - name: Build Swagger.Core
-      run: dotnet build ./src/*/Swagger.Core.csproj --no-restore  -c Release
-
-    - name: Pack Swagger.Core
-      run: dotnet pack ./src/*/Swagger.Core.csproj --no-restore -o ~/nuget  -c Release
-
-    # Swagger.UI
-
-    - name: Restore Swagger.UI
-      run: dotnet restore ./src/*/Swagger.UI.csproj
-
-    - name: Build Swagger.UI
-      run: dotnet build ./src/*/Swagger.UI.csproj --no-restore  -c Release
-
-    - name: Pack Swagger.UI
-      run: dotnet pack ./src/*/Swagger.UI.csproj --no-restore -o ~/nuget  -c Release
-
-    # Swagger.Builder.Abstractions
-
-    - name: Restore Swagger.Builder.Abstractions
-      run: dotnet restore ./src/*/Swagger.Builder.Abstractions.csproj
-
-    - name: Build Swagger.Builder.Abstractions
-      run: dotnet build ./src/*/Swagger.Builder.Abstractions.csproj --no-restore  -c Release
-
-    - name: Pack Swagger.Builder.Abstractions
-      run: dotnet pack ./src/*/Swagger.Builder.Abstractions.csproj --no-restore -o ~/nuget  -c Release
-
-    # Swagger.Builder
-
-    - name: Restore Swagger.Builder
-      run: dotnet restore ./src/*/Swagger.Builder.csproj
-
-    - name: Build Swagger.Builder
-      run: dotnet build ./src/*/Swagger.Builder.csproj --no-restore  -c Release
-
-    - name: Pack Swagger.Builder
-      run: dotnet pack ./src/*/Swagger.Builder.csproj --no-restore -o ~/nuget  -c Release
-
-    # Swagger.Hub
-
-    - name: Restore Swagger.Hub
-      run: dotnet restore ./src/*/Swagger.Hub.csproj
-
-    - name: Build Swagger.Hub
-      run: dotnet build ./src/*/Swagger.Hub.csproj --no-restore  -c Release
-
-    - name: Pack Swagger.Hub
-      run: dotnet pack ./src/*/Swagger.Hub.csproj --no-restore -o ~/nuget  -c Release
-
-    # Push
+    - name: Pack slnx
+      run: dotnet pack --no-build -o ~/nuget -c Release
 
     - name: Push Packages
       if: ${{ github.ref == 'refs/heads/main' }}
       run: >
-        dotnet nuget push "../../../nuget/*.nupkg"
-        -s ${{ vars.GG_NUGET_SOURCE_URL }}
-        -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
+        dotnet nuget push ~/nuget/*.nupkg
+        -s https://api.nuget.org/v3/index.json
+        -k ${{ secrets.NUGET_SECRET }}
         --skip-duplicate

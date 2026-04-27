@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace GarageGroup.Infra;
 
@@ -16,8 +16,8 @@ partial class OpenApiDocumentExtensions
 
         if (other.Paths?.Count > 0)
         {
-            var otherPaths = other.InnerGetOpenApiPathsWithSecurity(other.SecurityRequirements?.ToArray());
-            source.Paths = source.Paths.Join(otherPaths).ToDictionary<OpenApiPaths, OpenApiPathItem>();
+            var otherPaths = other.InnerGetOpenApiPathsWithSecurity(other.Security?.ToArray());
+            source.Paths = source.Paths.Join(otherPaths).ToDictionary<OpenApiPaths, IOpenApiPathItem>();
         }
 
         if (other.Servers?.Count > 0)
@@ -27,7 +27,7 @@ partial class OpenApiDocumentExtensions
 
         if (other.Tags?.Count > 0)
         {
-            source.Tags = source.Tags.Join(other.Tags).ToList();
+            source.Tags = source.Tags.Join(other.Tags).ToHashSet();
         }
 
         if (other.Extensions?.Count > 0)
@@ -115,6 +115,8 @@ partial class OpenApiDocumentExtensions
 
         foreach (var path in document.Paths.Values.SelectMany(GetOperations))
         {
+            path.Security ??= [];
+
             foreach (var security in securityRequirements)
             {
                 if (path.Security.Contains(security))
@@ -128,7 +130,7 @@ partial class OpenApiDocumentExtensions
 
         return document.Paths;
 
-        static IEnumerable<OpenApiOperation> GetOperations(OpenApiPathItem pathItem)
+        static IEnumerable<OpenApiOperation> GetOperations(IOpenApiPathItem pathItem)
             =>
             pathItem.Operations?.Select(GetValue) ?? [];
 
